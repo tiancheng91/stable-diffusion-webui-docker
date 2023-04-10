@@ -6,7 +6,7 @@ stable-diffusion-webui镜像文件, 包含如下两个版本
 
 ## 快速开始
 ```bash
-docker run -d --name webui --gpus all -p 7860:7860 -p 8888:8888 --name stable-diffusion-webui -d tiancheng91/stable-diffusion-webui
+docker run -d --name webui --gpus all -p 7860:7860 -p 8888:8888 tiancheng91/stable-diffusion-webui
 ```
 
 访问 
@@ -16,5 +16,5 @@ docker run -d --name webui --gpus all -p 7860:7860 -p 8888:8888 --name stable-di
 完整版本
 
 ```
-docker run -d --name webui --gpus all -p 7860:7860 -p 8888:8888 --name stable-diffusion-webui -d tiancheng91/stable-diffusion-webui:all
+docker run -d --name webui --gpus all -p 7860:7860 -p 8888:8888 tiancheng91/stable-diffusion-webui:all
 ```

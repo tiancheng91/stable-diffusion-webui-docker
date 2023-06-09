@@ -20,7 +20,7 @@ docker run -d --name webui --gpus all -p 7860:7860 -p 8888:8888 tiancheng91/stab
 ```
 
 
-helper:
+## nvidia-container安装
 ```
 curl https://nvidia.github.io/nvidia-docker/centos7/nvidia-docker.repo > /etc/yum.repos.d/nvidia-docker.repo
 yum -y install nvidia-container-toolkit

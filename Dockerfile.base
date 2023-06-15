@@ -1,40 +1,14 @@
-# Dockerfile.Stable
+# pytorch cuda 基础镜像
+FROM pytorch/pytorch:2.0.1-cuda11.7-cudnn8-runtime
 
-# https://gitlab.com/nvidia/container-images/cuda/-/blob/master/dist/11.7.1/ubuntu2204/devel/cudnn8/Dockerfile
-# FROM nvidia/cuda:11.7.1-cudnn8-devel-ubuntu22.04
-# https://gitlab.com/nvidia/container-images/cuda/-/blob/master/dist/11.7.1/ubuntu2204/base/Dockerfile
-FROM nvidia/cuda:11.7.1-base-ubuntu22.04
 ENV DEBIAN_FRONTEND noninteractive
-
+ENV TZ="Asia/Shanghai"
 USER root
-RUN apt-get update -y && apt-get upgrade -y && apt-get install -y libgl1 libglib2.0-0 wget aria2 git git-lfs python3-pip python-is-python3 && rm -rf /var/lib/apt/lists/* && apt-get clean
-
-RUN mkdir /content
 WORKDIR /content
 
-RUN pip install torch==1.13.1+cu117 torchvision==0.14.1+cu117 --extra-index-url https://download.pytorch.org/whl/cu117 && pip cache purge
-RUN pip install --pre xformers==0.0.16 triton numexpr jupyterlab==3.4.6 && pip cache purge
+# utils
+RUN apt-get update -y && apt-get upgrade -y && apt-get install -y wget aria2 git git-lfs vim && rm -rf /var/lib/apt/lists/* && apt-get clean
+RUN pip config set global.index-url https://mirrors.aliyun.com/pypi/simple
 
-RUN git clone -b v2.1 https://github.com/camenduru/stable-diffusion-webui
-ADD https://raw.githubusercontent.com/camenduru/stable-diffusion-webui-scripts/main/run_n_times.py /content/stable-diffusion-webui/scripts/run_n_times.py
-
-RUN git clone https://github.com/tiancheng91/sd-civitai-browser /content/stable-diffusion-webui/extensions/sd-civitai-browser \
-  && git clone https://github.com/AUTOMATIC1111/stable-diffusion-webui-rembg /content/stable-diffusion-webui/extensions/stable-diffusion-webui-rembg \
-  && git clone https://github.com/dtlnor/stable-diffusion-webui-localization-zh_CN.git /content/stable-diffusion-webui/extensions/stable-diffusion-webui-localization-zh_CN \
-  && git clone https://github.com/camenduru/stable-diffusion-webui-images-browser /content/stable-diffusion-webui/extensions/stable-diffusion-webui-images-browser \
-  && git clone https://github.com/camenduru/stable-diffusion-webui-huggingface /content/stable-diffusion-webui/extensions/stable-diffusion-webui-huggingface \
-  && git clone https://github.com/camenduru/sd-webui-additional-networks /content/stable-diffusion-webui/extensions/sd-webui-additional-networks \
-  && git clone https://github.com/Mikubill/sd-webui-controlnet /content/stable-diffusion-webui/extensions/sd-webui-controlnet \
-  && git clone https://github.com/camenduru/openpose-editor /content/stable-diffusion-webui/extensions/openpose-editor \
-  && git clone https://github.com/jexom/sd-webui-depth-lib /content/stable-diffusion-webui/extensions/sd-webui-depth-lib \
-  && git clone https://github.com/hnmr293/posex /content/stable-diffusion-webui/extensions/posex
-
-RUN sed -i -e '''/    prepare_environment()/a\    os.system\(f\"""sed -i -e ''\"s/dict()))/dict())).cuda()/g\"'' /content/stable-diffusion-webui/repositories/stable-diffusion-stability-ai/ldm/util.py""")''' /content/stable-diffusion-webui/launch.py
-RUN sed -i -e 's/fastapi==0.90.1/fastapi==0.89.1/g' /content/stable-diffusion-webui/requirements_versions.txt
-RUN sed -i -e 's/    start()/    #start()/g' /content/stable-diffusion-webui/launch.py
-RUN cd /content/stable-diffusion-webui && python launch.py --skip-torch-cuda-test || true && pip cache purge
-
-ADD ./run.sh /run.sh
-EXPOSE 7860 8888
-
-CMD ["/bin/sh", "/run.sh"]
+EXPOSE 8080
+CMD ["/bin/bash"]

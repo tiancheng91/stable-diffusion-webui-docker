@@ -1,3 +1,0 @@
-FROM tiancheng91/stable-diffusion-webui:all
-
-ADD ./run.sh /run.sh
